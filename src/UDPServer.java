@@ -1,54 +1,51 @@
-
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.SocketException;
-import java.io.IOException;
+import java.net.InetAddress;
 
 public class UDPServer {
+    private static final int DEFAULT_PORT = 8080; // Port par défaut
     private int port;
 
-    public UDPServer() {
-        this.port = 8080; // port par défaut
-    }
-
+    // Constructeur avec port
     public UDPServer(int port) {
         this.port = port;
     }
 
+    // Constructeur par défaut
+    public UDPServer() {
+        this(DEFAULT_PORT);
+    }
+
+    // Lancer le serveur
     public void launch() {
         try (DatagramSocket socket = new DatagramSocket(port)) {
-            System.out.println("Le serveur UDP est en cours d'exécution sur le port " + port);
-            byte[] buffer = new byte[1024];
+            System.out.println("Serveur UDP en écoute sur le port " + port);
+
+            byte[] buffer = new byte[1024]; // Buffer de réception
 
             while (true) {
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-                socket.receive(packet);
+                socket.receive(packet); // Recevoir un datagramme
 
-                String clientAddress = packet.getAddress().toString();
-                int clientPort = packet.getPort();
-
-                String received = new String(packet.getData(), 0, packet.getLength(), "UTF-8");
-
-                System.out.println("Reçu de " + clientAddress + ":" + clientPort + " - " + received);
+                String message = new String(packet.getData(), 0, packet.getLength(), "UTF-8");
+                System.out.println("Reçu de " + packet.getAddress() + ":" + packet.getPort() + ": " + message);
             }
-        } catch (SocketException e) {
-            System.err.println("Erreur de socket : " + e.getMessage());
-        } catch (IOException e) {
-            System.err.println("Erreur IO : " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
+    // Méthode toString pour décrire l'état du serveur
     @Override
     public String toString() {
-        return "Serveur UDP à l'écoute sur le port " + port;
+        return "UDPServer en écoute sur le port " + port;
     }
 
+    // Méthode principale
     public static void main(String[] args) {
-        int port = (args.length > 0) ? Integer.parseInt(args[0]) : 8080;
-        UDPServer server = new UDPServer(port);
-        System.out.println(server.toString());
+        int portToUse = args.length > 0 ? Integer.parseInt(args[0]) : DEFAULT_PORT;
+        UDPServer server = new UDPServer(portToUse);
         server.launch();
     }
 }
-
 
