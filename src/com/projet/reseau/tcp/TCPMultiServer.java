@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class TCPMultiServer {
-    private static final int DEFAULT_PORT = 8080; // Port par défaut
+    private static final int DEFAULT_PORT = 8080; 
     private static final int THREAD_POOL_SIZE = 10; // Taille du pool de threads
     private final int port;
 
